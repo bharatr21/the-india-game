@@ -1,0 +1,53 @@
+- generic [ref=f2e3]:
+  - banner [ref=f2e4]:
+    - button "THE INDIA GAME ■" [ref=f2e5] [cursor=pointer]:
+      - text: THE INDIAGAME
+      - generic [ref=f2e6]: ■
+    - navigation "Main navigation" [ref=f2e7]:
+      - button "HQ" [ref=f2e8] [cursor=pointer]
+      - button "MAP ID" [ref=f2e9] [cursor=pointer]
+      - button "CAPITALS" [ref=f2e10] [cursor=pointer]
+      - button "36 SPRINT" [ref=f2e11] [cursor=pointer]
+      - button "FIELD GUIDE" [ref=f2e12] [cursor=pointer]
+  - main [ref=f2e13]:
+    - generic [ref=f2e14]:
+      - generic [ref=f2e15]:
+        - generic [ref=f2e16]:
+          - paragraph [ref=f2e17]: A VERY SERIOUS GEOGRAPHY MACHINE
+          - heading "KNOW YOUR STATES." [level=1] [ref=f2e18]: KNOWYOURSTATES.
+          - paragraph [ref=f2e19]: Learn the map. Nail the capitals. Beat the clock.
+          - button "START WITH THE MAP →" [ref=f2e20] [cursor=pointer]
+        - generic "Thirty-six states and union territories poster" [ref=f2e21]:
+          - generic [ref=f2e22]: EST. 2026 / INDIA
+          - strong [ref=f2e23]: "36"
+          - generic [ref=f2e25]: STATES + UTSONE GAME
+      - generic [ref=f2e26]:
+        - generic [ref=f2e27]:
+          - generic [ref=f2e28]: CHOOSE YOUR DRILL
+          - generic [ref=f2e29]: "[03 MODES]"
+        - generic [ref=f2e30]:
+          - button "/01 MAP + RECALL NAME THAT STATE A state or UT lights up. Name it. Switch on hard mode and name its capital too. ↗" [ref=f2e31] [cursor=pointer]:
+            - generic [ref=f2e32]: /01
+            - generic [ref=f2e33]: MAP + RECALL
+            - strong [ref=f2e34]: NAME THAT STATE
+            - generic [ref=f2e35]: A state or UT lights up. Name it. Switch on hard mode and name its capital too.
+            - generic [ref=f2e36]: ↗
+          - button "/02 PURE RECALL CAPITAL CHECK We give you a state or UT. You type the capital. Keep the streak alive. ↗" [ref=f2e37] [cursor=pointer]:
+            - generic [ref=f2e38]: /02
+            - generic [ref=f2e39]: PURE RECALL
+            - strong [ref=f2e40]: CAPITAL CHECK
+            - generic [ref=f2e41]: We give you a state or UT. You type the capital. Keep the streak alive.
+            - generic [ref=f2e42]: ↗
+          - button "/03 TIMED THE 36 SPRINT List all 28 states and 8 union territories before the clock runs out. Full names only. ↗" [ref=f2e43] [cursor=pointer]:
+            - generic [ref=f2e44]: /03
+            - generic [ref=f2e45]: TIMED
+            - strong [ref=f2e46]: THE 36 SPRINT
+            - generic [ref=f2e47]: List all 28 states and 8 union territories before the clock runs out. Full names only.
+            - generic [ref=f2e48]: ↗
+      - button "NOT READY? OPEN THE 36-ENTITY FIELD GUIDE MAP + LIST →" [ref=f2e49] [cursor=pointer]:
+        - generic [ref=f2e50]: NOT READY?
+        - strong [ref=f2e51]: OPEN THE 36-ENTITY FIELD GUIDE
+        - generic [ref=f2e52]: MAP + LIST →
+  - contentinfo [ref=f2e53]:
+    - generic [ref=f2e54]: THE INDIA GAME / PHASE 01
+    - generic [ref=f2e55]: 28 STATES · 8 UTS · 1 COUNTRY
