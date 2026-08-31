@@ -90,3 +90,26 @@ test('clamps zoom scale to [1, 12]', () => {
   assert.equal(clampScale(12), 12)
   assert.equal(clampScale(40), 12)
 })
+
+import topology from './data/india-states.topo.json' with { type: 'json' }
+
+test('every entity joins to exactly one map feature, and vice versa', () => {
+  const objectKey = Object.keys(topology.objects)[0]!
+  const geometries = (
+    topology.objects as unknown as Record<
+      string,
+      { geometries: { properties: { lgdCode: number } }[] }
+    >
+  )[objectKey]!.geometries
+  const mapCodes = geometries.map((g) => g.properties.lgdCode)
+
+  assert.equal(mapCodes.length, 36, 'map should carry 36 features')
+  assert.equal(new Set(mapCodes).size, 36, 'map LGD codes should be unique')
+
+  for (const entity of ENTITIES) {
+    assert.ok(mapCodes.includes(entity.lgdCode), `no map feature for ${entity.name}`)
+  }
+  for (const code of mapCodes) {
+    assert.ok(ENTITY_BY_LGD.has(code), `map feature ${code} has no entity`)
+  }
+})
