@@ -6,3 +6,4 @@ dist/
 
 # design docs kept local, not tracked
 docs/superpowers/
+playwright-mcp/

@@ -13,7 +13,6 @@ export function normalizeAnswer(value: string): string {
     .replace(/[^a-z0-9]/g, '')
 }
 
-// TODO(human): implement matchesAnswer
 export function matchesAnswer(
   value: string,
   answer: string,
