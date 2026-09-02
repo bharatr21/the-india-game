@@ -384,3 +384,31 @@ footer { display: flex; justify-content: space-between; gap: 20px; padding: 18px
   stroke-width: 4px;
   stroke-linejoin: round;
 }
+
+/* Hero poster: the reference's red flag stripes are replaced by the Indian
+   tricolour, so the poster ground moves from yellow (which clashes with
+   saffron) to ink — maximum contrast against saffron, white, green and navy,
+   and no new colour introduced to the palette. */
+.hero-poster { background: var(--ink); color: var(--paper); }
+.poster-top { border-bottom-color: var(--paper); }
+
+.poster-flag {
+  position: absolute;
+  /* bottom:20px matches .poster-bottom so the flag and the closing line share
+     a baseline.
+     No --shadow here: that token means "lifts off the paper ground", and this
+     sits inside an already-shadowed panel, where the poster's overflow:hidden
+     clipped it into a sliver anyway. The border is paper rather than ink
+     because an ink border on an ink poster is invisible, which is what the
+     shadow was compensating for. */
+  right: 22px;
+  bottom: 20px;
+  display: block;
+  width: 42%;
+  height: auto;
+  border: 3px solid var(--paper);
+}
+
+@media (max-width: 900px) {
+  .poster-flag { width: 40%; }
+}

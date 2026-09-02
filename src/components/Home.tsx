@@ -1,3 +1,4 @@
+import IndiaFlag from './IndiaFlag.tsx'
 import type { View } from '../App.tsx'
 
 type Mode = {
@@ -44,7 +45,7 @@ export default function Home({ onNavigate }: Props) {
         <div className="hero-poster reveal delay-1" aria-label="Thirty-six states and union territories poster">
           <span className="poster-top">EST. 2026 / INDIA</span>
           <strong>36</strong>
-          <div className="poster-stripes" />
+          <IndiaFlag className="poster-flag" />
           <span className="poster-bottom">STATES + UTS<br />ONE GAME</span>
         </div>
       </section>
