@@ -18,6 +18,30 @@ type Props = {
   onSelect?: (entity: Entity) => void
 }
 
+/** -1 runs the leader out to the left, 1 to the right. */
+type LeaderDirection = -1 | 1
+
+/**
+ * Which way each tiny entity's leader runs, toward open space.
+ *
+ * A geometric rule cannot infer this. The obvious one — "west of the viewBox
+ * midpoint points left" — is wrong here because fitExtent fits the full
+ * claimed extent including the Andaman & Nicobar Islands (centroid x 663), so
+ * the whole peninsula sits in the left half: Tamil Nadu's centroid is at 301
+ * against a midpoint of 410. Every tiny entity would read as "western",
+ * sending Puducherry's label inland instead of out over the Bay of Bengal.
+ *
+ * Five entities stated explicitly beat a heuristic that is wrong for some of
+ * them. Anything absent falls back to the midpoint rule.
+ */
+const LEADER_DIRECTION: Partial<Record<EntityCode, LeaderDirection>> = {
+  LD: -1, // Lakshadweep — Arabian Sea, west
+  DH: -1, // Daman & Diu — Arabian Sea, west
+  PY: 1, //  Puducherry — Bay of Bengal, east
+  DL: -1, // landlocked; left clears the UP and HP labels
+  CH: -1, // landlocked; left runs out over Punjab
+}
+
 type CalloutProps = {
   shape: MapShape
   scale: number
@@ -30,11 +54,8 @@ type CalloutProps = {
  */
 function TinyCallout({ shape, scale, showLabel }: CalloutProps) {
   const [cx, cy] = shape.centroid
-  // Point the leader at open space rather than across the country: entities
-  // west of centre lead out into the Arabian Sea, those east of it into the
-  // Bay of Bengal. Pointing right from Lakshadweep drops the label on the
-  // Kerala coast, on top of the KA and KL labels.
-  const dirX = cx < MAP_WIDTH / 2 ? -1 : 1
+  const dirX: LeaderDirection =
+    LEADER_DIRECTION[shape.entity.code] ?? (cx < MAP_WIDTH / 2 ? -1 : 1)
 
   return (
     <g className="tiny-callout" aria-hidden="true">
