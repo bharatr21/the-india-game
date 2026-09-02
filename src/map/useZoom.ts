@@ -8,6 +8,8 @@ import { MAP_HEIGHT, MAP_WIDTH } from './projection.ts'
 
 export type ZoomControls = {
   readonly transform: string
+  /** Current zoom factor, so overlays can size themselves against it. */
+  readonly scale: number
   readonly zoomIn: () => void
   readonly zoomOut: () => void
   readonly reset: () => void
@@ -15,6 +17,7 @@ export type ZoomControls = {
 
 export function useZoom(svgRef: RefObject<SVGSVGElement | null>): ZoomControls {
   const [transform, setTransform] = useState('translate(0,0) scale(1)')
+  const [scale, setScale] = useState(1)
   const behaviorRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null)
 
   useEffect(() => {
@@ -31,6 +34,7 @@ export function useZoom(svgRef: RefObject<SVGSVGElement | null>): ZoomControls {
       .on('zoom', (event) => {
         const { x, y, k } = event.transform
         setTransform(`translate(${x},${y}) scale(${k})`)
+        setScale(k)
       })
 
     behaviorRef.current = behavior
@@ -62,5 +66,5 @@ export function useZoom(svgRef: RefObject<SVGSVGElement | null>): ZoomControls {
     behavior.transform(select(svg).transition().duration(250) as never, zoomIdentity)
   }, [svgRef])
 
-  return { transform, zoomIn, zoomOut, reset }
+  return { transform, scale, zoomIn, zoomOut, reset }
 }

@@ -21,7 +21,25 @@ export default function IndiaMap({
   onSelect,
 }: Props) {
   const svgRef = useRef<SVGSVGElement | null>(null)
-  const { transform, zoomIn, zoomOut, reset } = useZoom(svgRef)
+  const { transform, scale, zoomIn, zoomOut, reset } = useZoom(svgRef)
+
+  // A tiny entity is a few pixels across at full extent, so highlighting it
+  // changes nothing a player can see. Ring it instead.
+  //
+  // `highlightedCode` is the game asking a question; `selectedCode` is the
+  // Field Guide showing a selection. No caller passes both.
+  const marked = MAP_SHAPES.find(
+    (shape) => shape.tiny && shape.entity.code === (highlightedCode ?? selectedCode),
+  )
+  // The code label would hand the player the answer while the game is asking,
+  // so it appears only for a Field Guide selection.
+  const showCalloutLabel = marked !== undefined && highlightedCode === undefined
+
+  // Point the leader at open space rather than across the country: entities
+  // west of centre get a leader running out into the Arabian Sea, those east
+  // of it into the Bay of Bengal. Pointing right from Lakshadweep drops the
+  // label on the Kerala coast, on top of the KA and KL labels.
+  const dirX = marked && marked.centroid[0] < MAP_WIDTH / 2 ? -1 : 1
 
   return (
     <div className="map-frame">
@@ -64,9 +82,42 @@ export default function IndiaMap({
             )
           })}
 
-          {/* TODO(human, deferred): draw the marker for a highlighted tiny entity.
-              MAP_SHAPES carries `tiny` and a projected `centroid`; .tiny-marker
-              and .tiny-leader already exist in styles.css. */}
+          {marked && (
+            <g className="tiny-callout" aria-hidden="true">
+              {/* Radius shrinks as the player zooms in so the ring tightens onto
+                  the region instead of swallowing it, while non-scaling-stroke
+                  and a divided font-size keep strokes and text a constant size
+                  on screen at any zoom. */}
+              <circle
+                className="tiny-marker"
+                cx={marked.centroid[0]}
+                cy={marked.centroid[1]}
+                r={26 / scale}
+                vectorEffect="non-scaling-stroke"
+              />
+              {showCalloutLabel && (
+                <>
+                  <line
+                    className="tiny-leader"
+                    x1={marked.centroid[0] + (18 / scale) * dirX}
+                    y1={marked.centroid[1] - 18 / scale}
+                    x2={marked.centroid[0] + (46 / scale) * dirX}
+                    y2={marked.centroid[1] - 46 / scale}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <text
+                    className="tiny-callout-label"
+                    x={marked.centroid[0] + (50 / scale) * dirX}
+                    y={marked.centroid[1] - 48 / scale}
+                    textAnchor={dirX === -1 ? 'end' : 'start'}
+                    style={{ fontSize: `${13 / scale}px` }}
+                  >
+                    {marked.entity.code}
+                  </text>
+                </>
+              )}
+            </g>
+          )}
 
           {showLabels && MAP_SHAPES.filter((shape) => !shape.tiny).map((shape) => (
             <text

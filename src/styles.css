@@ -373,3 +373,14 @@ footer { display: flex; justify-content: space-between; gap: 20px; padding: 18px
   .state-list .list-header, .state-list button { grid-template-columns: 2fr .6fr 2fr; }
   .state-list .list-header span:nth-child(3), .state-list button b:nth-child(3) { display: none; }
 }
+
+.tiny-callout-label {
+  fill: var(--red);
+  font-family: inherit;
+  font-weight: 950;
+  letter-spacing: -.5px;
+  paint-order: stroke;
+  stroke: var(--paper);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
