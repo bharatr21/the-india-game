@@ -26,7 +26,7 @@ export default function FieldGuide() {
 
       {mode === 'map' ? (
         <div className="guide-map-layout">
-          <IndiaMap selectedCode={selected.code} showLabels onSelect={setSelected} />
+          <IndiaMap selectedCode={selected.code} showLabels markAllTiny onSelect={setSelected} />
           <aside className="state-dossier">
             <span className="dossier-number">LGD / {selected.lgdCode}</span>
             <strong>{selected.code}</strong>
