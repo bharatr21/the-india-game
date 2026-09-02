@@ -22,24 +22,25 @@ type Props = {
 type LeaderDirection = -1 | 1
 
 /**
- * Which way each tiny entity's leader runs, toward open space.
+ * Which way each tiny entity's leader runs, so the label lands on open space
+ * rather than on top of another state.
  *
- * A geometric rule cannot infer this. The obvious one — "west of the viewBox
- * midpoint points left" — is wrong here because fitExtent fits the full
- * claimed extent including the Andaman & Nicobar Islands (centroid x 663), so
- * the whole peninsula sits in the left half: Tamil Nadu's centroid is at 301
- * against a midpoint of 410. Every tiny entity would read as "western",
- * sending Puducherry's label inland instead of out over the Bay of Bengal.
+ * Left is the default because four of the five tiny entities want it:
+ * Lakshadweep and Daman & Diu open onto the Arabian Sea, and Delhi and
+ * Chandigarh are landlocked, where either direction is equally fine and left
+ * clears the UP and HP labels. Puducherry is the only one that differs — it
+ * faces the Bay of Bengal.
  *
- * Five entities stated explicitly beat a heuristic that is wrong for some of
- * them. Anything absent falls back to the midpoint rule.
+ * There is deliberately no geometric rule here. The obvious one, "west of the
+ * viewBox midpoint points left", is meaningless on this map: fitExtent fits
+ * the full claimed extent including the Andaman & Nicobar Islands at centroid
+ * x 663, so the whole peninsula falls in the left half and Tamil Nadu's
+ * centroid is 301 against a midpoint of 410. It returns LEFT for all five
+ * tiny entities, which is a constant pretending to be a calculation.
  */
+const LEADER_LEFT: LeaderDirection = -1
 const LEADER_DIRECTION: Partial<Record<EntityCode, LeaderDirection>> = {
-  LD: -1, // Lakshadweep — Arabian Sea, west
-  DH: -1, // Daman & Diu — Arabian Sea, west
-  PY: 1, //  Puducherry — Bay of Bengal, east
-  DL: -1, // landlocked; left clears the UP and HP labels
-  CH: -1, // landlocked; left runs out over Punjab
+  PY: 1, // Puducherry — Bay of Bengal, east
 }
 
 type CalloutProps = {
@@ -54,8 +55,7 @@ type CalloutProps = {
  */
 function TinyCallout({ shape, scale, showLabel }: CalloutProps) {
   const [cx, cy] = shape.centroid
-  const dirX: LeaderDirection =
-    LEADER_DIRECTION[shape.entity.code] ?? (cx < MAP_WIDTH / 2 ? -1 : 1)
+  const dirX: LeaderDirection = LEADER_DIRECTION[shape.entity.code] ?? LEADER_LEFT
 
   return (
     <g className="tiny-callout" aria-hidden="true">
