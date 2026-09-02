@@ -113,3 +113,30 @@ test('every entity joins to exactly one map feature, and vice versa', () => {
     assert.ok(ENTITY_BY_LGD.has(code), `map feature ${code} has no entity`)
   }
 })
+
+import { arrangeEntities } from './game.ts'
+
+test('field guide filters by type', () => {
+  assert.equal(arrangeEntities(ENTITIES, 'name', 'all').length, 36)
+  assert.equal(arrangeEntities(ENTITIES, 'name', 'state').length, 28)
+  assert.equal(arrangeEntities(ENTITIES, 'name', 'ut').length, 8)
+})
+
+test('field guide sorts without mutating the source', () => {
+  const firstBefore = ENTITIES[0]!.code
+  arrangeEntities(ENTITIES, 'capital', 'all')
+  assert.equal(ENTITIES[0]!.code, firstBefore, 'ENTITIES must not be reordered')
+})
+
+test('field guide sort by type groups states before UTs', () => {
+  const rows = arrangeEntities(ENTITIES, 'type', 'all')
+  assert.equal(rows[0]!.type, 'state')
+  assert.equal(rows[35]!.type, 'ut')
+  assert.equal(rows.slice(0, 28).every((e) => e.type === 'state'), true)
+})
+
+test('field guide sorts by name alphabetically, not character code', () => {
+  const rows = arrangeEntities(ENTITIES, 'name', 'all')
+  assert.equal(rows[0]!.name, 'Andaman & Nicobar Islands')
+  assert.equal(rows[1]!.name, 'Andhra Pradesh')
+})
