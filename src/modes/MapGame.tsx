@@ -3,7 +3,7 @@ import IndiaMap from '../components/IndiaMap.tsx'
 import PageIntro from '../components/PageIntro.tsx'
 import DifficultySwitch from '../components/DifficultySwitch.tsx'
 import { ENTITIES } from '../data/states.ts'
-import { matchesAnswer, pickRandom } from '../game.ts'
+import { drawFromDeck, matchesAnswer } from '../game.ts'
 
 type Feedback = { type: 'correct' | 'wrong'; text: string }
 
@@ -22,7 +22,9 @@ const START: RoundState = { phase: 'name' }
 
 export default function MapGame() {
   const [hard, setHard] = useState(false)
-  const [target, setTarget] = useState(() => pickRandom(ENTITIES))
+  // Sampling without replacement, same deck behaviour as mode 02.
+  const [draw, setDraw] = useState(() => drawFromDeck([], ENTITIES))
+  const target = draw.entity
   const [round, setRound] = useState<RoundState>(START)
   const [answer, setAnswer] = useState('')
   const [feedback, setFeedback] = useState<Feedback | null>(null)
@@ -31,7 +33,7 @@ export default function MapGame() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const resetRound = (nextHard: boolean = hard) => {
-    setTarget((current) => pickRandom(ENTITIES, current.code))
+    setDraw((current) => drawFromDeck(current.deck, ENTITIES, current.entity.code))
     setRound(START)
     setAnswer('')
     setFeedback(null)

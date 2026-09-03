@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import PageIntro from '../components/PageIntro.tsx'
 import { ENTITIES, type Entity } from '../data/states.ts'
-import { matchesAnswer, normalizeAnswer, pickRandom } from '../game.ts'
+import { drawFromDeck, matchesAnswer, normalizeAnswer } from '../game.ts'
 
 type Feedback = { type: 'correct' | 'wrong'; text: string }
 
@@ -41,7 +41,10 @@ export function capitalFeedback(
 }
 
 export default function CapitalsGame() {
-  const [target, setTarget] = useState(() => pickRandom(ENTITIES))
+  // Sampling without replacement: deal from a shuffled deck of all 36 so
+  // every state and UT is asked once before any repeats.
+  const [draw, setDraw] = useState(() => drawFromDeck([], ENTITIES))
+  const target = draw.entity
   const [answer, setAnswer] = useState('')
   const [complete, setComplete] = useState(false)
   const [feedback, setFeedback] = useState<Feedback | null>(null)
@@ -50,7 +53,7 @@ export default function CapitalsGame() {
   const inputRef = useRef<HTMLInputElement>(null)
 
   const next = () => {
-    setTarget((current) => pickRandom(ENTITIES, current.code))
+    setDraw((current) => drawFromDeck(current.deck, ENTITIES, current.entity.code))
     setAnswer('')
     setComplete(false)
     setFeedback(null)

@@ -32,7 +32,7 @@ test('every capital is a non-empty string', () => {
 })
 
 import {
-  clampScale, findEntity, formatTime, matchesAnswer, normalizeAnswer, pickRandom,
+  clampScale, findEntity, formatTime, matchesAnswer, normalizeAnswer,
 } from './game.ts'
 
 test('normalizes spaces, punctuation, and case', () => {
@@ -66,16 +66,6 @@ test('rejects codes as answers', () => {
 test('does not accept a wrong-but-nearby capital', () => {
   const assam = ENTITY_BY_CODE.get('AS')!
   assert.equal(matchesAnswer('Guwahati', assam.capital, assam.capitalAliases), false)
-})
-
-test('avoids immediately repeating an entity', () => {
-  const picked = pickRandom(ENTITIES.slice(0, 2), 'AP', () => 0)
-  assert.equal(picked.code, 'AR')
-})
-
-test('picks the only entity when the pool has one', () => {
-  const picked = pickRandom(ENTITIES.slice(0, 1), 'AP', () => 0)
-  assert.equal(picked.code, 'AP')
 })
 
 test('formats a countdown clock', () => {
@@ -139,4 +129,62 @@ test('field guide sorts by name alphabetically, not character code', () => {
   const rows = arrangeEntities(ENTITIES, 'name', 'all')
   assert.equal(rows[0]!.name, 'Andaman & Nicobar Islands')
   assert.equal(rows[1]!.name, 'Andhra Pradesh')
+})
+
+import { drawFromDeck, shuffle } from './game.ts'
+
+/** Deterministic LCG so shuffle tests are reproducible. */
+function seeded(seed: number): () => number {
+  let state = seed
+  return () => {
+    state = (state * 1664525 + 1013904223) % 4294967296
+    return state / 4294967296
+  }
+}
+
+test('shuffle returns a permutation without mutating the input', () => {
+  const source = ENTITIES.slice(0, 10)
+  const before = source.map((e) => e.code)
+  const result = shuffle(source, seeded(1))
+  assert.equal(result.length, source.length)
+  assert.deepEqual([...result].map((e) => e.code).sort(), [...before].sort())
+  assert.deepEqual(source.map((e) => e.code), before, 'input must not be reordered')
+})
+
+test('a full deck deals every entity exactly once before repeating', () => {
+  const random = seeded(42)
+  let deck: readonly (typeof ENTITIES)[number][] = []
+  const drawn: string[] = []
+  for (let i = 0; i < 36; i++) {
+    const result = drawFromDeck(deck, ENTITIES, undefined, random)
+    deck = result.deck
+    drawn.push(result.entity.code)
+  }
+  assert.equal(drawn.length, 36)
+  assert.equal(new Set(drawn).size, 36, 'all 36 must appear before any repeats')
+  assert.equal(deck.length, 0, 'deck should be exhausted')
+})
+
+test('the deck refills after being exhausted', () => {
+  const random = seeded(7)
+  let deck: readonly (typeof ENTITIES)[number][] = []
+  let last = ''
+  for (let i = 0; i < 36; i++) {
+    const result = drawFromDeck(deck, ENTITIES, undefined, random)
+    deck = result.deck
+    last = result.entity.code
+  }
+  const after = drawFromDeck(deck, ENTITIES, last as never, random)
+  assert.ok(after.entity, 'a 37th draw must still produce an entity')
+  assert.equal(after.deck.length, 35, 'a fresh deck should have been dealt')
+})
+
+test('a refilled deck does not immediately repeat the previous entity', () => {
+  // Force the boundary: empty deck, and whatever the shuffle puts first must
+  // not equal previousCode.
+  for (let seed = 1; seed <= 40; seed++) {
+    const first = drawFromDeck([], ENTITIES, undefined, seeded(seed)).entity.code
+    const guarded = drawFromDeck([], ENTITIES, first, seeded(seed)).entity.code
+    assert.notEqual(guarded, first, `seed ${seed} repeated across the boundary`)
+  }
 })

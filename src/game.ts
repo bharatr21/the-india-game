@@ -32,18 +32,6 @@ export function findEntity(
   return entities.find((entity) => matchesAnswer(value, entity.name, entity.nameAliases))
 }
 
-export function pickRandom(
-  entities: readonly Entity[],
-  previousCode?: EntityCode,
-  random: () => number = Math.random,
-): Entity {
-  const pool =
-    entities.length > 1 ? entities.filter((entity) => entity.code !== previousCode) : entities
-  const picked = pool[Math.floor(random() * pool.length)]
-  if (!picked) throw new Error('pickRandom called with an empty pool')
-  return picked
-}
-
 export function formatTime(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60)
   const seconds = totalSeconds % 60
@@ -89,4 +77,52 @@ export function arrangeEntities(
         return a.name.localeCompare(b.name)
     }
   })
+}
+
+/**
+ * Fisher-Yates. Returns a new array; the input is never reordered.
+ */
+export function shuffle<T>(items: readonly T[], random: () => number = Math.random): T[] {
+  const result = [...items]
+  for (let index = result.length - 1; index > 0; index--) {
+    const swapIndex = Math.floor(random() * (index + 1))
+    const current = result[index]!
+    result[index] = result[swapIndex]!
+    result[swapIndex] = current
+  }
+  return result
+}
+
+/**
+ * Draw the next entity, sampling **without replacement**.
+ *
+ * Picking uniformly at random and only excluding the previous entity feels
+ * far more repetitive than it sounds: with 36 entities the birthday problem
+ * puts the first repeat around the eighth draw. Dealing from a shuffled deck
+ * instead guarantees all 36 appear before any of them comes round again.
+ *
+ * Pass the entity just seen as `previousCode` so a refilled deck cannot open
+ * with it, which would be the one repeat a deck otherwise allows.
+ */
+export function drawFromDeck(
+  deck: readonly Entity[],
+  pool: readonly Entity[],
+  previousCode?: EntityCode,
+  random: () => number = Math.random,
+): { entity: Entity; deck: readonly Entity[] } {
+  let remaining = deck
+
+  if (remaining.length === 0) {
+    remaining = shuffle(pool, random)
+    if (remaining.length > 1 && remaining[0]!.code === previousCode) {
+      const swapped = [...remaining]
+      swapped[0] = remaining[1]!
+      swapped[1] = remaining[0]!
+      remaining = swapped
+    }
+  }
+
+  const entity = remaining[0]
+  if (!entity) throw new Error('drawFromDeck called with an empty pool')
+  return { entity, deck: remaining.slice(1) }
 }
