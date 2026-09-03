@@ -1,6 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" fill="#f2ecdf"/>
-  <rect x="6" y="6" width="52" height="52" fill="none" stroke="#151515" stroke-width="4"/>
-  <text x="32" y="45" font-family="Menlo,Monaco,Consolas,monospace" font-size="30" font-weight="900"
-        text-anchor="middle" fill="#f04b38">36</text>
+  <!-- Full-bleed tricolour: at favicon sizes the bands are the recognisable
+       part, so they fill the square rather than sitting in a 3:2 rectangle
+       with dead space above and below. -->
+  <rect width="64" height="64" fill="#FF9933"/>
+  <rect y="21.333" width="64" height="21.334" fill="#FFFFFF"/>
+  <rect y="42.667" width="64" height="21.333" fill="#138808"/>
+  <!-- The chakra keeps its 24 spokes, but the rim and hub carry enough weight
+       that when the spokes stop resolving around 16px it still reads as a
+       navy wheel rather than smudging into a dot. -->
+  <g transform="translate(32 32)" fill="none" stroke="#000080">
+    <circle r="9.2" stroke-width="1.8"/>
+    <circle r="1.9" fill="#000080" stroke="none"/>
+    <g stroke-width="0.8">
+      <path d="M0-9.2V0M4.6-7.97 0 0M7.97-4.6 0 0M9.2 0H0M7.97 4.6 0 0M4.6 7.97 0 0M0 9.2V0M-4.6 7.97 0 0M-7.97 4.6 0 0M-9.2 0H0M-7.97-4.6 0 0M-4.6-7.97 0 0"/>
+      <path d="M2.38-8.88 0 0M6.5-6.5 0 0M8.88-2.38 0 0M8.88 2.38 0 0M6.5 6.5 0 0M2.38 8.88 0 0M-2.38 8.88 0 0M-6.5 6.5 0 0M-8.88 2.38 0 0M-8.88-2.38 0 0M-6.5-6.5 0 0M-2.38-8.88 0 0"/>
+    </g>
+  </g>
+  <rect x="0.75" y="0.75" width="62.5" height="62.5" fill="none" stroke="#151515" stroke-width="1.5"/>
 </svg>
